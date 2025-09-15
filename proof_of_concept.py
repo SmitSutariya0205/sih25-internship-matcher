@@ -156,43 +156,108 @@ def recommend_internships(title, location, duration, stipend_min, stipend_max, t
 # ----------------------------
 st.markdown("""
 <style>
-    .header-container {
-        background: linear-gradient(90deg, #1e3c72, #2a5298);
-        padding: 20px;
-        border-radius: 12px;
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+    :root {
+        --bg-1: #0b1220;
+        --bg-2: #0e1526;
+        --card: rgba(255, 255, 255, 0.05);
+        --border: rgba(255, 255, 255, 0.08);
+        --text: #e6edf3;
+        --muted: #9da9bb;
+        --primary: #59c3ff;
+        --primary-2: #4aa3e0;
+        --success: #66bb6a;
+        --warning: #ffd166;
+        --danger: #ef476f;
+        --shadow: 0 10px 30px rgba(0,0,0,0.35);
+    }
+
+    .stApp {
+        background: radial-gradient(1200px 800px at 20% -10%, #1b2b4b 0%, rgba(27,43,75,0) 60%),
+                    radial-gradient(1200px 800px at 120% 10%, #0d1b2a 0%, rgba(13,27,42,0) 55%),
+                    linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 100%);
+        color: var(--text);
+        font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, 'Apple Color Emoji', 'Segoe UI Emoji';
+    }
+
+    /* Header */
+    .hero {
+        background: linear-gradient(180deg, rgba(89,195,255,0.15) 0%, rgba(89,195,255,0.04) 100%);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+        padding: 28px 28px 22px;
+        border-radius: 16px;
         text-align: center;
-        color: white;
-        font-size: 28px;
-        font-weight: bold;
-        margin-bottom: 20px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        margin-bottom: 18px;
     }
+    .hero h1 { margin: 0 0 6px; font-size: 28px; letter-spacing: 0.2px; }
+    .hero p  { margin: 0; color: var(--muted); font-size: 14.5px; }
+
+    /* Controls */
+    .panel {
+        border: 1px solid var(--border);
+        background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.02) 100%);
+        border-radius: 14px;
+        padding: 14px 16px 4px;
+        box-shadow: var(--shadow);
+        margin-bottom: 12px;
+    }
+
+    /* Primary button */
+    .stButton>button {
+        background: linear-gradient(180deg, var(--primary) 0%, var(--primary-2) 100%) !important;
+        color: #0b1220 !important;
+        border: 0 !important;
+        border-radius: 12px !important;
+        padding: 10px 16px !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.2px !important;
+        box-shadow: 0 8px 20px rgba(73, 167, 224, 0.35) !important;
+        transition: transform 0.05s ease, box-shadow 0.2s ease !important;
+    }
+    .stButton>button:hover { transform: translateY(-1px) !important; }
+    .stButton>button:active { transform: translateY(0px) !important; }
+
+    /* Cards */
     .internship-card {
-        padding: 20px;
-        margin: 15px 0;
-        border-radius: 15px;
-        border: 2px solid #4fc3f7;
-        background: #0f141a;
-        box-shadow: 0 6px 15px rgba(0,0,0,0.4);
-        transition: transform 0.2s;
+        position: relative;
+        padding: 18px 18px 14px;
+        margin: 10px 0 12px;
+        border-radius: 16px;
+        border: 1px solid var(--border);
+        background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.03) 100%);
+        box-shadow: var(--shadow);
+        transition: transform .12s ease, border-color .2s ease;
     }
-    .internship-card:hover {
-        transform: translateY(-5px);
+    .internship-card:hover { transform: translateY(-2px); border-color: rgba(89,195,255,0.35); }
+    .card-title { color: var(--primary); font-size: 20px; margin: 0 0 6px; }
+    .meta { color: var(--muted); font-size: 13px; margin: 0 0 4px; }
+    .pill {
+        display: inline-block; font-size: 12px; padding: 4px 8px; margin: 6px 6px 0 0;
+        border-radius: 999px; border: 1px solid var(--border); background: rgba(255,255,255,0.04);
     }
-    .card-title {
-        color: #4fc3f7;
-        font-size: 24px;
-        margin-bottom: 10px;
+    .pill.ok { border-color: rgba(102,187,106,0.4); background: rgba(102,187,106,0.08); color: var(--success); }
+    .pill.dim { color: var(--muted); }
+
+    /* Score badge */
+    .score {
+        position: absolute; right: 14px; top: 14px;
+        background: rgba(89,195,255,0.15); border: 1px solid rgba(89,195,255,0.35);
+        color: var(--primary); padding: 4px 8px; font-weight: 700; border-radius: 10px; font-size: 12px;
     }
-    .stipend-paid { color: #66bb6a; font-weight: bold; }
-    .stipend-unpaid { color: #bdbdbd; }
-    .st-emotion-cache-1j02j0g { padding-top: 0rem; }
+
+    /* Misc */
+    .stipend-paid { color: var(--success); font-weight: 700; }
+    .stipend-unpaid { color: var(--muted); font-weight: 600; }
+    .spacer { height: 6px; }
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown('<div class="header-container">🎯 Internship Recommender System</div>', unsafe_allow_html=True)
+st.markdown('<div class="hero"><h1>🎯 Internship Recommender</h1><p>Find tailored internships with smart matching</p></div>', unsafe_allow_html=True)
 
-st.write("Find the best internships tailored to your preferences 🚀")
+st.markdown('<div class="panel">', unsafe_allow_html=True)
+st.write("📝 Your preferences")
 
 # Dropdown Options
 locations = sorted(list(set([i["location"] for i in internships])))
@@ -236,6 +301,10 @@ elif stipend_choice == "20001+":
     stipend_min, stipend_max = 20001, 999999
 
 
+# Close styled preferences panel
+st.markdown('</div>', unsafe_allow_html=True)
+st.markdown('<div class="spacer"></div>', unsafe_allow_html=True)
+
 # Button Action
 if st.button("🔍 Find Internships"):
     if not title.strip():
@@ -256,13 +325,14 @@ if st.button("🔍 Find Internships"):
                 stipend_css_class = "stipend-paid" if parse_stipend(internship['stipend']) > 0 else "stipend-unpaid"
                 st.markdown(f"""
 <div class="internship-card">
+    <span class="score">⭐ {score:.3f}</span>
     <h3 class="card-title">{internship['title']}</h3>
-    <p>🏢 <b>Organization:</b> {internship['organization']}</p>
-    <p>📍 <b>Location:</b> {internship['location']}</p>
-    <p>⏳ <b>Duration:</b> {internship['duration']}</p>
-    <p><span class="{stipend_css_class}">💰 <b>Stipend:</b> {internship['stipend']}</span></p>
-    <p>🗓 <b>Apply By:</b> {internship['apply_by']}</p>
-    <p>⭐ <b>Match Score:</b> {score:.3f}</p>
+    <p class="meta">🏢 <b>{internship['organization']}</b></p>
+    <p class="meta">📍 {internship['location']} &nbsp;•&nbsp; ⏳ {internship['duration']} &nbsp;•&nbsp; <span class="{stipend_css_class}">💰 {internship['stipend']}</span> &nbsp;•&nbsp; 🗓 {internship['apply_by']}</p>
+    <div>
+        <span class="pill ok">Suggested match</span>
+        <span class="pill dim">Refine your filters</span>
+    </div>
 </div>
 """, unsafe_allow_html=True)
         
@@ -271,12 +341,13 @@ if st.button("🔍 Find Internships"):
                 stipend_css_class = "stipend-paid" if parse_stipend(internship['stipend']) > 0 else "stipend-unpaid"
                 st.markdown(f"""
 <div class="internship-card">
+    <span class="score">⭐ {score:.3f}</span>
     <h3 class="card-title">{internship['title']}</h3>
-    <p>🏢 <b>Organization:</b> {internship['organization']}</p>
-    <p>📍 <b>Location:</b> {internship['location']}</p>
-    <p>⏳ <b>Duration:</b> {internship['duration']}</p>
-    <p><span class="{stipend_css_class}">💰 <b>Stipend:</b> {internship['stipend']}</span></p>
-    <p>🗓 <b>Apply By:</b> {internship['apply_by']}</p>
-    <p>⭐ <b>Match Score:</b> {score:.3f}</p>
+    <p class="meta">🏢 <b>{internship['organization']}</b></p>
+    <p class="meta">📍 {internship['location']} &nbsp;•&nbsp; ⏳ {internship['duration']} &nbsp;•&nbsp; <span class="{stipend_css_class}">💰 {internship['stipend']}</span> &nbsp;•&nbsp; 🗓 {internship['apply_by']}</p>
+    <div>
+        <span class="pill ok">Top match</span>
+        <span class="pill">Relevant role</span>
+    </div>
 </div>
 """, unsafe_allow_html=True)
